@@ -128,7 +128,7 @@ class FormDefinition(CMSPlugin):
 
 @python_2_unicode_compatible
 class FormField(models.Model):
-    form = models.ForeignKey(FormDefinition, related_name='fields')
+    form = models.ForeignKey(FormDefinition, on_delete=models.CASCADE, related_name='fields')
     field_type = models.CharField(
         _('Field Type'), max_length=100,
         choices=settings.DJANGOCMS_FORMS_FIELD_TYPES,
@@ -223,11 +223,13 @@ class FormField(models.Model):
 @python_2_unicode_compatible
 class FormSubmission(models.Model):
     plugin = models.ForeignKey(
-        Form, verbose_name=_('Form'), editable=False, related_name='submissions')
+        Form, on_delete=models.CASCADE,
+        verbose_name=_('Form'), editable=False, related_name='submissions')
     creation_date = models.DateTimeField(_('Date'), auto_now=True)
     created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, verbose_name=_('User'), editable=False, null=True)
-    ip = models.GenericIPAddressField(verbose_name='IP', blank=True, null=True)
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,
+        verbose_name=_('User'), editable=False, null=True)
+    ip = models.GenericIPAddressField(verbose_name=_('IP'), blank=True, null=True)
     referrer = models.CharField(_('Referrer URL'), max_length=150, blank=True)
 
     form_data = JSONField(_('Form Data'))
